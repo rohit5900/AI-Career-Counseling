@@ -15,15 +15,22 @@ The application features a high-contrast **Black & White** theme with CRT scanli
 ### 1. Authentication & Onboarding
 
 - **Login**: Secure entry point with a "system access" aesthetic.
-- **Register**: New user initialization protocol (`/register`).
-- **Onboarding**: "User Configuration" step to capture education and interests.
+- **Register**: New user initialization protocol.
+- **Onboarding Wizard**:
+  - **Education**: Degree & Major capture.
+  - **Skills**: Rate your top skills (1-5) using retro sliders.
+  - **Preferences**: Work style (Remote/Hybrid) and Risk Tolerance.
+  - **Learning**: Video vs Text preference.
 
 ### 2. Dashboard & Chat
 
-- **Terminal Chat Interface**: Interact with the AI Counselor in a command-line style interface.
-  - **User Commands**: `> USER_INPUT`
-  - **System Responses**: `> SYSTEM_RESPONSE`
-- **End Session**: Terminate execution and return to the login screen securely.
+- **Start Chat**: Begin session to initialize terminal.
+- **Commands**:
+  - `> /ANALYZE`: Trigger AI analysis of your onboarding profile.
+  - `> /EXPORT`: Generate and download a PDF report of your session.
+  - `> /HELP`: View all available commands.
+  - `> /RESET`: Clear session data.
+- **End Session**: Terminate execution securely.
 
 ### 3. Landing Page
 

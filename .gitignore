@@ -4,3 +4,8 @@ dist
 .DS_Store
 coverage
 .vscode
+client/dist
+client/.env
+client/node_modules
+server/node_modules
+server/.env

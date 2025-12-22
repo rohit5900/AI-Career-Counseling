@@ -1,0 +1,10 @@
+/* Cleaned up for immersive theme */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+    flex: 1;
+}

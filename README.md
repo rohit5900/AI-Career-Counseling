@@ -9,18 +9,17 @@ A full-stack AI career counseling platform featuring a retro terminal aesthetic,
 
 ## 🚀 Quick Start
 
-1.  **Backend**:
+The project is configured to run both client and server concurrently with a single command.
+
+1.  **Install & Run**:
+
     ```bash
-    cd server
     npm install
     npm start
     ```
-2.  **Frontend**:
-    ```bash
-    cd client
-    npm install
-    npm run dev
-    ```
+
+    - **Frontend**: http://localhost:5173
+    - **Backend**: http://localhost:5000
 
 ## 🌟 Key Features
 

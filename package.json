@@ -1,0 +1,25 @@
+{
+  "name": "ai-career-counseling",
+  "version": "1.0.0",
+  "description": "A full-stack AI career counseling platform featuring a retro terminal aesthetic, immersive onboarding, and LLM-driven career analysis.",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start --prefix server\" \"npm run dev --prefix client\"",
+    "client": "npm run dev --prefix client",
+    "server": "npm run start --prefix server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rohit5900/AI-Career-Counseling.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rohit5900/AI-Career-Counseling/issues"
+  },
+  "homepage": "https://github.com/rohit5900/AI-Career-Counseling#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

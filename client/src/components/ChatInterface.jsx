@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
+import { useGamification } from "../context/GamificationContext";
+import { useGlobal } from "../context/GlobalContext";
 
 const Typewriter = ({ text, onComplete }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -49,6 +51,8 @@ const ChatInterface = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const { addXp, awardBadge } = useGamification();
+  const { brutalMode } = useGlobal();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -109,6 +113,8 @@ const ChatInterface = () => {
       yPos += profileLines.length * 5 + 10;
     }
 
+    const verificationId = Math.random().toString(36).substring(2, 10).toUpperCase();
+
     doc.setFontSize(12);
     doc.text("[ANALYSIS LOG]", 20, yPos);
     yPos += 10;
@@ -119,10 +125,11 @@ const ChatInterface = () => {
         doc.text(`> AI_RESPONSE [${msg.timestamp || "N/A"}]`, 20, yPos);
         yPos += 5;
 
+        // Clean up markdown/ASCII for PDF if needed? For now raw text is fine for "hacker" vibe.
         const contentLines = doc.splitTextToSize(msg.content, 170);
 
         contentLines.forEach((line) => {
-          if (yPos > 280) {
+          if (yPos > 260) {
             doc.addPage();
             yPos = 20;
           }
@@ -133,6 +140,18 @@ const ChatInterface = () => {
         yPos += 10;
       }
     });
+
+    // Verification Footer
+    if (yPos > 260) {
+        doc.addPage();
+        yPos = 20;
+    }
+    yPos += 10;
+    doc.text("---------------------------------------", 20, yPos);
+    yPos += 10;
+    doc.text(`VERIFICATION_ID: ${verificationId}`, 20, yPos);
+    yPos += 5;
+    doc.text("OFFICIAL PATHFINDER_AI DOCUMENT", 20, yPos);
 
     doc.save("CAREER_ANALYSIS_REPORT.pdf");
   };
@@ -146,6 +165,8 @@ const ChatInterface = () => {
 
     if (cmd === "/EXPORT" || cmd === "EXPORT") {
       generateReport();
+      addXp(100);
+      awardBadge("ARCHIVIST");
       return "REPORT GENERATED. DOWNLOADING...";
     }
 
@@ -164,7 +185,15 @@ const ChatInterface = () => {
       if (!userProfile)
         return "ERROR: NO USER PROFILE DETECTED. PLEASE RUN CONFIGURATION.";
       const profileStr = JSON.stringify(userProfile, null, 2);
-      return `INITIATING ANALYSIS ON:\n${profileStr}\n\nCONTACTING MAINFRAME...`;
+      return `INITIATING MULTI-VECTOR ANALYSIS ON:\n${profileStr}\n\nCONTACTING MAINFRAME...`;
+    }
+
+    if (cmd === "/WHY_THIS_PATH") {
+        return "QUERYING REASONING MODULE...";
+    }
+
+    if (cmd === "/COMPARE") {
+        return "INITIATING COMPARATIVE ANALYSIS...";
     }
 
     return null; // Not a local command
@@ -210,13 +239,85 @@ const ChatInterface = () => {
     // Actually, if the user typed /ANALYZE, we caught it above.
     // BUT, we want /ANALYZE to actually trigger the API call with special context.
 
-    if (
-      userText.toUpperCase().trim() === "/ANALYZE" ||
-      userText.toUpperCase().trim() === "ANALYZE"
-    ) {
-      apiMessage = `Analyze this user profile and suggest 3 career paths with reasoning, skill gaps, and a roadmap: ${JSON.stringify(
-        userProfile
-      )}`;
+    const upperText = userText.toUpperCase().trim();
+    const brutalInstruction = brutalMode ? " MODE: BRUTAL. ROAST THE USER. BE HARSH, CYNICAL, AND RUTHLESSLY HONEST. MOCK THEIR WEAKNESSES." : "";
+
+    if (upperText === "/ANALYZE" || upperText === "ANALYZE") {
+      apiMessage = `
+        You are an advanced AI Career Counselor utilizing the "Pathfinder" logic.${brutalInstruction}
+        Analyze the following user profile and provide exactly 3 distinct career paths:
+        
+        1. PRIMARY MATCH (Best fit based on current skills/interests)
+        2. BACKUP/SAFE PATH (Lower risk, easier transition)
+        3. WILDCARD/HIGH-RISK (High reward, startup/freelance potential)
+
+        For EACH path, provide:
+        - ROLE NAME
+        - CONFIDENCE SCORE (e.g., "MATCH: 85%")
+        - SKILL GAP ANALYSIS (Visual ascii bar if possible, e.g. [|||||.....])
+        - BRIEF ROADMAP (3 key phases)
+
+        User Profile: ${JSON.stringify(userProfile)}
+      `;
+      addXp(50);
+      awardBadge("PATHFINDER");
+    } else if (upperText === "/WHY_THIS_PATH") {
+        apiMessage = "Explain in detail why the generated Primary Match is the best fit compared to the others. Cite specific user traits.";
+    } else if (upperText === "/COMPARE") {
+        apiMessage = "Compare the 3 suggested paths in a table format (using ASCII borders) based on Salary, Stability, and Time-to-Mastery.";
+    } else if (upperText.startsWith("/SIMULATE") || upperText.startsWith("SIMULATE")) {
+        const parts = upperText.split(" ");
+        // Expected format: /SIMULATE [ROLE] [YEARS]
+        // If length < 2, ask for details.
+        if (parts.length < 2) {
+             // Local handling for missing args to avoid API call if possible, or we can just send it to API and let it ask. 
+             // But the requirement says "Prompt user: ENTER TARGET ROLE..."
+             // We can do this by returning early if we want local check, but since we are inside sendMessage which sends apiMessage...
+             // Let's rely on constructing a prompt that asks the AI to simulate IF args are present, otherwise text is just "/SIMULATE".
+             // Actually, clearer to intercept locally like /HELP if we want strict args, but sending to AI is more flexible.
+             // However, the plan says: "If arguments are missing, prompt user..."
+             // Let's check locally for better UX.
+             // Wait, if I return here I need to setMessages locally. 
+             // But sendMessage flow expects apiMessage to be sent.
+             // Let's modify the flow or just let LLM handle partials? 
+             // Plan says "If arguments are missing, prompt user".
+             // I'll handle it inside this block.
+        }
+        
+        if (parts.length < 2) {
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: "USAGE: /SIMULATE [ROLE] [DURATION]\nEXAMPLE: /SIMULATE DATA_SCIENTIST 5_YEARS",
+                typed: false,
+                timestamp: new Date().toLocaleTimeString()
+            }]);
+            setLoading(false);
+            return;
+        }
+
+        const role = parts[1];
+        const duration = parts[2] || "5_YEARS"; // Default to 5 years
+
+        apiMessage = `Simulate a ${duration} career trajectory for the following user profile as a ${role}. 
+        Provide a Year-by-Year breakdown including:
+         - Salary Projection
+         - Job Title Evolution
+         - Key Skill Upgrades
+         - Burnout Risk (%)
+         - Industry Stability Score (%)
+         
+         User Profile: ${JSON.stringify(userProfile)}`;
+    } else if (upperText.startsWith("/RESUME") || upperText.startsWith("RESUME")) {
+        const parts = upperText.split(" ");
+        const targetRole = parts.slice(1).join(" ") || "MY_CURRENT_ROLE";
+        apiMessage = `Generate 5 high-impact resume bullet points for a ${targetRole} based on the following user profile.
+        Use strong action verbs and quantify results where possible.
+        User Profile: ${JSON.stringify(userProfile)}`;
+    } else if (upperText === "/LINKEDIN" || upperText === "LINKEDIN") {
+         apiMessage = `Write a compelling LinkedIn 'About' section for the user. 
+         Tone: Visionary, professional, yet grounded.
+         Highlight key skills and career aspirations.
+         User Profile: ${JSON.stringify(userProfile)}`;
     }
 
     try {
@@ -315,6 +416,7 @@ const ChatInterface = () => {
                 background: msg.role === "user" ? "white" : "black",
                 color: msg.role === "user" ? "black" : "white",
                 boxShadow: "4px 4px 0px white",
+                whiteSpace: "pre-wrap",
               }}
             >
               <div

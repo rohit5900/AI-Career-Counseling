@@ -1,6 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { soundManager } from '../utils/SoundManager';
 
 const DemoPreview = () => {
+    const [input, setInput] = useState('');
+    const [output, setOutput] = useState([
+        { type: 'system', text: '> SYSTEM_READY' },
+        { type: 'info', text: 'Type /HELP for available commands' }
+    ]);
+    const [blinkSpeed, setBlinkSpeed] = useState(1);
+
+    const handleInputChange = (e) => {
+        setInput(e.target.value.toUpperCase());
+        soundManager.playKeypress();
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            processCommand();
+        }
+    };
+
+    const processCommand = () => {
+        const cmd = input.trim();
+        let response = [];
+        
+        switch(cmd) {
+            case '/HELP':
+                response = [
+                    { type: 'success', text: 'AVAILABLE COMMANDS:' },
+                    { type: 'info', text: '  /ANALYZE   - Start career analysis' },
+                    { type: 'info', text: '  /SIMULATE  - Run career simulation' },
+                    { type: 'info', text: '  /RESET     - Clear terminal' }
+                ];
+                break;
+            case '/RESET':
+                setOutput([]);
+                setInput('');
+                return;
+            default:
+                response = [{ type: 'error', text: `UNKNOWN COMMAND: ${cmd}` }];
+        }
+
+        setOutput(prev => [...prev, { type: 'input', text: `> ${cmd}` }, ...response]);
+        setInput('');
+        soundManager.playKeypress(); // Extra click for enter
+    };
+
+    useEffect(() => {
+        document.documentElement.style.setProperty('--blink-speed', `${blinkSpeed}s`);
+    }, [blinkSpeed]);
+
     return (
         <section style={{ padding: '4rem 2rem', background: '#050505', borderBottom: '1px solid white' }}>
             <div className="retro-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -34,25 +83,45 @@ const DemoPreview = () => {
                         <p style={{ marginTop: '2rem', color: '#888', fontStyle: 'italic' }}>&gt; VISUALIZING PATHWAY...</p>
                     </div>
 
-                    {/* Sample Terminal Output */}
-                    <div style={{ background: 'black', border: '2px solid white', padding: '1.5rem', fontFamily: 'monospace', fontSize: '0.9rem', boxShadow: '5px 5px 0px #333' }}>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <span style={{ color: '#4ade80' }}>&gt; INPUT:</span> B.Tech | Web Dev | AI Curious
+
+                    {/* Interactive Terminal */}
+                    <div style={{ background: 'black', border: '2px solid white', padding: '1.5rem', fontFamily: 'monospace', fontSize: '0.9rem', boxShadow: '5px 5px 0px #333', height: '400px', display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', marginBottom: '1rem' }}>
+                            {output.map((line, i) => (
+                                <div key={i} style={{ 
+                                    marginBottom: '0.5rem', 
+                                    color: line.type === 'error' ? 'red' : line.type === 'success' ? '#4ade80' : line.type === 'input' ? 'white' : '#aaa' 
+                                }}>
+                                    {line.text}
+                                </div>
+                            ))}
                         </div>
-                        <div style={{ marginBottom: '1rem', color: 'yellow' }}>
-                            &gt; ANALYZING PARAMETERS...<br/>
-                            &gt; CROSS-REFERENCING MARKET DATA...
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <span style={{ color: '#4ade80', marginRight: '10px' }}>&gt;</span>
+                            <input 
+                                type="text" 
+                                value={input}
+                                onChange={handleInputChange}
+                                onKeyDown={handleKeyDown}
+                                className="retro-input"
+                                style={{ border: 'none', padding: 0, height: 'auto', background: 'transparent' }}
+                                autoFocus
+                            />
                         </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <span style={{ color: '#4ade80' }}>&gt; MATCH FOUND:</span> AI FULL-STACK ENGINEER
-                        </div>
-                        <div style={{ color: 'white' }}>
-                            &gt; ROADMAP GENERATED: 18 MONTHS<br/>
-                            &gt; PHASE 1: Python/FastAPI Mastery<br/>
-                            &gt; PHASE 2: LLM Integration Patterns<br/>
-                            &gt; PHASE 3: System Architecture
-                        </div>
-                        <div className="retro-cursor" style={{ marginTop: '1rem' }}>&nbsp;</div>
+                    </div>
+
+                    {/* Controls */}
+                    <div style={{ marginTop: '2rem', gridColumn: '1 / -1' }}>
+                         <label style={{ display: 'block', marginBottom: '10px' }}>CURSOR BLINK SPEED: {blinkSpeed}s</label>
+                         <input 
+                            type="range" 
+                            min="0.1" 
+                            max="2" 
+                            step="0.1" 
+                            value={blinkSpeed} 
+                            onChange={(e) => setBlinkSpeed(parseFloat(e.target.value))}
+                            className="retro-range"
+                         />
                     </div>
                  </div>
             </div>

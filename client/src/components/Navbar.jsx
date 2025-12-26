@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
@@ -10,6 +10,19 @@ const Navbar = () => {
     // Mock logout
     navigate('/');
   };
+
+  const [logoText, setLogoText] = useState('');
+  const fullText = 'PATHFINDER_AI';
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      setLogoText(fullText.substring(0, index + 1));
+      index++;
+      if (index === fullText.length) clearInterval(interval);
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <nav style={{
@@ -26,8 +39,8 @@ const Navbar = () => {
       background: 'black',
       boxSizing: 'border-box'
     }}>
-      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/')}>
-        PATHFINDER_AI
+      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', cursor: 'pointer', fontFamily: 'monospace' }} onClick={() => navigate('/')}>
+        {logoText}<span className="blink">_</span>
       </div>
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
         {!isLoggedIn ? (

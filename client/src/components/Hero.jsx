@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const [count, setCount] = useState(0);
+  const targetCount = 1240;
+
+  useEffect(() => {
+    let start = 0;
+    const duration = 2000;
+    const increment = targetCount / (duration / 16);
+    
+    const timer = setInterval(() => {
+        start += increment;
+        if (start >= targetCount) {
+            setCount(targetCount);
+            clearInterval(timer);
+        } else {
+            setCount(Math.floor(start));
+        }
+    }, 16);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <section style={{
@@ -56,6 +75,10 @@ const Hero = () => {
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button className="retro-btn retro-btn-primary" autoFocus onClick={() => navigate('/register')}>EXECUTE</button>
           <button className="retro-btn retro-btn-outline" onClick={() => document.getElementById('about').scrollIntoView()}>READ_MANUAL</button>
+        </div>
+
+        <div style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#888' }}>
+            JOINING <span style={{ color: 'white', fontWeight: 'bold' }}>{count.toLocaleString()}+</span> ACTIVE AGENTS
         </div>
       </div>
     </section>

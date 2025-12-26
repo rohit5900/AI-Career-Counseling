@@ -1,13 +1,50 @@
 import React from 'react';
 import ChatInterface from '../components/ChatInterface';
-import Navbar from '../components/Navbar'; // Optionally reuse Navbar or a specific Sidebar
+import Navbar from '../components/Navbar';
+import { CareerTimeline, SkillTracker, HealthReport, DecisionHistory, UserStats } from '../components/DashboardWidgets';
+import { useGamification } from '../context/GamificationContext';
+
 
 const Dashboard = () => {
+    const { xp, level, badges } = useGamification();
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'black' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'black', overflow: 'hidden' }}>
             <Navbar />
-            <div style={{ flex: 1, overflow: 'hidden', paddingTop: '80px' }}> {/* Padding top for fixed navbar */}
-               <ChatInterface />
+            <div style={{ 
+                flex: 1, 
+                paddingTop: '80px', 
+                paddingBottom: '20px',
+                paddingLeft: '20px',
+                paddingRight: '20px',
+                display: 'grid', 
+                gridTemplateColumns: '300px 1fr 300px', 
+                gap: '20px',
+                height: '100%',
+                boxSizing: 'border-box'
+            }}>
+                {/* Left Panel */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }} className="no-scrollbar">
+                    <UserStats xp={xp} level={level} badges={badges} />
+                    <CareerTimeline />
+                    <SkillTracker />
+                </div>
+
+                {/* Center Panel - Main Terminal */}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <ChatInterface />
+                </div>
+
+                {/* Right Panel */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }} className="no-scrollbar">
+                    <HealthReport />
+                    <DecisionHistory />
+                </div>
+            </div>
+            
+            {/* Mobile overlay warning (optional, since this is complex UI) */}
+            <div className="mobile-warning" style={{ display: 'none' }}>
+                Please use desktop terminal for optimal experience.
             </div>
         </div>
     );

@@ -24,11 +24,11 @@ const TrustSection = () => {
     }, []);
 
     return (
-        <section style={{ borderBottom: '1px solid white', display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '400px' }}>
+        <section style={{ borderBottom: '1px solid var(--border-color)', display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '400px' }}>
             {/* Left: Testimonial Logs */}
-            <div style={{ background: '#0a0a0a', padding: '2rem', borderRight: '1px solid white', overflow: 'hidden', position: 'relative' }}>
-                <h3 style={{ borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>LIVE_SUCCESS_FEED</h3>
-                <div style={{ fontFamily: 'monospace', color: '#888', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ background: 'var(--bg-color)', padding: '2rem', borderRight: '1px solid var(--border-color)', overflow: 'hidden', position: 'relative' }}>
+                <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px', marginBottom: '20px', color: 'var(--text-color)' }}>LIVE_SUCCESS_FEED</h3>
+                <div style={{ fontFamily: 'monospace', color: 'var(--secondary-color)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {logs.map((log, i) => (
                         <div key={i} style={{ 
                             opacity: (i + 1) / logs.length, 
@@ -42,11 +42,11 @@ const TrustSection = () => {
             </div>
 
             {/* Right: Report Preview */}
-            <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: 'black' }}>
-                <h3 style={{ marginBottom: '2rem' }}>SAMPLE_OUTPUT_PREVIEW</h3>
+            <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: 'var(--bg-color)' }}>
+                <h3 style={{ marginBottom: '2rem', color: 'var(--text-color)' }}>SAMPLE_OUTPUT_PREVIEW</h3>
                 
-                <div className="retro-card" style={{ width: '100%', maxWidth: '400px', fontSize: '0.8rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                <div className="retro-card" style={{ width: '100%', maxWidth: '400px', fontSize: '0.8rem', color: 'var(--text-color)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                         <span>CANDIDATE: UNKNOWN</span>
                         <span style={{ color: '#4ade80' }}>MATCH: 94%</span>
                     </div>
@@ -63,12 +63,12 @@ const TrustSection = () => {
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                        <div style={{ border: '1px solid #333', padding: '5px', textAlign: 'center' }}>
-                            <div style={{ fontSize: '1.5rem', color: 'white' }}>$85k</div>
+                        <div style={{ border: '1px solid var(--border-color)', padding: '5px', textAlign: 'center' }}>
+                            <div style={{ fontSize: '1.5rem', color: 'var(--text-color)' }}>$85k</div>
                             <div style={{ fontSize: '0.6rem', color: '#888' }}>EST_STARTING</div>
                         </div>
-                        <div style={{ border: '1px solid #333', padding: '5px', textAlign: 'center' }}>
-                            <div style={{ fontSize: '1.5rem', color: 'white' }}>6mo</div>
+                        <div style={{ border: '1px solid var(--border-color)', padding: '5px', textAlign: 'center' }}>
+                            <div style={{ fontSize: '1.5rem', color: 'var(--text-color)' }}>6mo</div>
                             <div style={{ fontSize: '0.6rem', color: '#888' }}>TIME_TO_HIRE</div>
                         </div>
                     </div>

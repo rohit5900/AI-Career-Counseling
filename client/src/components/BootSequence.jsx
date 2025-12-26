@@ -38,11 +38,11 @@ const BootSequence = ({ onComplete }) => {
       top: 0,
       left: 0,
       width: '100%',
-      height: '100vh',
-      backgroundColor: '#000',
-      color: '#0f0',
-      fontFamily: 'monospace',
+      height: '100%',
+      backgroundColor: 'var(--bg-color)',
+      color: 'var(--text-color)',
       padding: '2rem',
+      fontFamily: '"Courier New", Courier, monospace',
       zIndex: 10000,
       overflow: 'hidden'
     }}>

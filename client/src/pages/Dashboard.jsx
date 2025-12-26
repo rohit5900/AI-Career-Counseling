@@ -9,7 +9,7 @@ const Dashboard = () => {
     const { xp, level, badges } = useGamification();
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'black', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-color)', overflow: 'hidden' }}>
             <Navbar />
             <div style={{ 
                 flex: 1, 
@@ -31,7 +31,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Center Panel - Main Terminal */}
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', height: '100%' }}>
                     <ChatInterface />
                 </div>
 

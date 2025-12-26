@@ -8,6 +8,7 @@ export const GamificationProvider = ({ children }) => {
     const [xp, setXp] = useState(0);
     const [badges, setBadges] = useState([]);
     const [recentUnlock, setRecentUnlock] = useState(null);
+    const [logs, setLogs] = useState([]);
     
     // Derived state
     const level = 1 + Math.floor(xp / 100);
@@ -35,12 +36,24 @@ export const GamificationProvider = ({ children }) => {
             addXp(50); // Bonus XP for badge
         }
     };
+    
+    const addLog = (log) => {
+        setLogs(prev => [log, ...prev].slice(0, 5)); // Keep last 5 logs
+    };
+
+    const resetGamification = () => {
+        setXp(0);
+        setBadges([]);
+        setRecentUnlock(null);
+        setLogs([]);
+        prevLevelRef.current = 1;
+    };
 
     // Placeholder for streak logic if needed later
     const streak = 1; 
 
     return (
-        <GamificationContext.Provider value={{ xp, level, badges, streak, addXp, awardBadge, recentUnlock }}>
+        <GamificationContext.Provider value={{ xp, level, badges, streak, addXp, awardBadge, recentUnlock, resetGamification, logs, addLog }}>
             {children}
             {recentUnlock && (
                 <div style={{

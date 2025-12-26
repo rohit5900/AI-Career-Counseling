@@ -1,4 +1,5 @@
 import React from 'react';
+import { useGamification } from '../context/GamificationContext';
 
 export const CareerTimeline = () => {
   const events = [
@@ -9,9 +10,9 @@ export const CareerTimeline = () => {
   ];
 
   return (
-    <div className="retro-card" style={{ height: '100%', overflowY: 'auto' }}>
-      <h4 style={{ borderBottom: '1px solid white', paddingBottom: '10px' }}>TIMELINE</h4>
-      <div style={{ paddingLeft: '10px', borderLeft: '2px solid #333', marginLeft: '5px' }}>
+    <div className="retro-card" style={{ minHeight: '300px', overflowY: 'auto' }}>
+      <h4 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>TIMELINE</h4>
+      <div style={{ paddingLeft: '10px', borderLeft: '2px solid var(--secondary-color)', marginLeft: '5px' }}>
         {events.map((e, i) => (
           <div key={i} style={{ marginBottom: '20px', position: 'relative' }}>
             <div style={{ 
@@ -23,8 +24,8 @@ export const CareerTimeline = () => {
               background: e.status === 'COMPLETED' ? '#4ade80' : e.status === 'IN_PROGRESS' ? 'yellow' : '#333',
               borderRadius: '50%'
             }}></div>
-            <div style={{ fontSize: '0.8rem', color: '#888' }}>{e.year}</div>
-            <div style={{ color: e.status === 'LOCKED' ? '#555' : 'white' }}>{e.event}</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--secondary-color)' }}>{e.year}</div>
+            <div style={{ color: e.status === 'LOCKED' ? 'var(--secondary-color)' : 'var(--text-color)' }}>{e.event}</div>
           </div>
         ))}
       </div>
@@ -33,17 +34,46 @@ export const CareerTimeline = () => {
 };
 
 export const SkillTracker = () => {
-  const skills = [
-    { name: 'REACT.JS', level: 75 },
-    { name: 'NODE.JS', level: 60 },
-    { name: 'PYTHON', level: 40 },
-    { name: 'SYS_DESIGN', level: 30 },
-  ];
+  const { level } = useGamification();
+  const [userProfile, setUserProfile] = React.useState(null);
+
+  React.useEffect(() => {
+    const stored = localStorage.getItem('userProfile');
+    if (stored) {
+        try {
+            setUserProfile(JSON.parse(stored));
+        } catch (error) {
+            console.error("Failed to parse user profile");
+        }
+    }
+  }, []);
+  
+  // Dynamic skill calculation based on level
+  // If user has skills in profile, map them. Otherwise fallback.
+  
+  let skills = [];
+  
+  if (userProfile && userProfile.skills && userProfile.skills.length > 0) {
+      skills = userProfile.skills.map(s => ({
+          name: s.name.toUpperCase() || 'UNKNOWN_VECTOR',
+          // Base level from onboarding (1-5) mapped to 20-100 scale, plus gamification bonus
+          level: Math.min(100, (parseInt(s.level) * 20) + (level * 2))
+      }));
+  } else {
+      // Fallback if no profile
+      const baseSkill = 20 + (level * 5);
+      skills = [
+        { name: 'REACT.JS', level: Math.min(100, baseSkill + 15) },
+        { name: 'NODE.JS', level: Math.min(100, baseSkill) },
+        { name: 'PYTHON', level: Math.min(100, baseSkill - 10) },
+        { name: 'SYS_DESIGN', level: Math.min(100, baseSkill - 20) },
+      ];
+  }
 
   return (
     <div className="retro-card">
-      <h4 style={{ borderBottom: '1px solid white', paddingBottom: '10px' }}>SKILL_MATRIX</h4>
-      {skills.map((s, i) => (
+      <h4 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>SKILL_MATRIX</h4>
+      {skills.slice(0, 5).map((s, i) => (
         <div key={i} style={{ marginBottom: '10px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
             <span>{s.name}</span>
@@ -59,17 +89,23 @@ export const SkillTracker = () => {
 };
 
 export const HealthReport = () => {
+  const { level } = useGamification();
+  // Calculate dynamic health based on level
+  const healthScore = Math.min(100, 70 + (level * 5)); 
+  const burnoutRisk = healthScore > 90 ? 'LOW' : healthScore > 75 ? 'MODERATE' : 'HIGH';
+  const burnoutColor = burnoutRisk === 'LOW' ? '#4ade80' : burnoutRisk === 'MODERATE' ? 'yellow' : 'red';
+  
   return (
     <div className="retro-card">
-      <h4 style={{ borderBottom: '1px solid white', paddingBottom: '10px' }}>CAREER_HEALTH</h4>
+      <h4 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>CAREER_HEALTH</h4>
       <div style={{ textAlign: 'center', margin: '20px 0' }}>
-        <div style={{ fontSize: '2.5rem', color: '#4ade80', fontWeight: 'bold' }}>82%</div>
+        <div style={{ fontSize: '2.5rem', color: '#4ade80', fontWeight: 'bold' }}>{healthScore}%</div>
         <div style={{ fontSize: '0.8rem', color: '#888' }}>OPTIMAL TRAJECTORY</div>
       </div>
       <div style={{ fontSize: '0.8rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
             <span>BURNOUT_RISK:</span>
-            <span style={{ color: 'yellow' }}>MODERATE</span>
+            <span style={{ color: burnoutColor }}>{burnoutRisk}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>MARKET_DEMAND:</span>
@@ -80,16 +116,23 @@ export const HealthReport = () => {
   );
 };
 
+
+
 export const DecisionHistory = () => {
+    const { logs } = useGamification();
+    
     return (
-        <div className="retro-card" style={{ flex: 1 }}>
-            <h4 style={{ borderBottom: '1px solid white', paddingBottom: '10px' }}>LOGS</h4>
-            <ul style={{ paddingLeft: '20px', fontSize: '0.8rem', color: '#aaa', listStyleType: 'square' }}>
-                <li>Searched: "Data Science"</li>
-                <li>Compared: "Frontend vs Backend"</li>
-                <li>Simulated: "DevOps 5 Years"</li>
-                <li>Exported: PDF Report</li>
-            </ul>
+        <div className="retro-card" style={{ flex: 1, minHeight: '200px' }}>
+            <h4 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>LOGS</h4>
+            {logs.length === 0 ? (
+                <div style={{ color: 'var(--secondary-color)', fontSize: '0.8rem', fontStyle: 'italic' }}>NO_ACTIVITY_DETECTED</div>
+            ) : (
+                <ul style={{ paddingLeft: '20px', fontSize: '0.8rem', color: 'var(--secondary-color)', listStyleType: 'square' }}>
+                    {logs.map((log, i) => (
+                        <li key={i}>{log}</li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 };
@@ -100,7 +143,7 @@ export const UserStats = ({ xp, level, badges }) => {
 
     return (
         <div className="retro-card">
-            <h4 style={{ borderBottom: '1px solid white', paddingBottom: '10px' }}>OPERATOR_STATUS</h4>
+            <h4 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>OPERATOR_STATUS</h4>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>LVL {level}</div>
                 <div style={{ fontSize: '0.8rem', color: '#888' }}>{xp} / {nextLevelXp} XP</div>

@@ -25,16 +25,16 @@ const Hero = () => {
 
   return (
     <section style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
+      minHeight: '80vh', 
+      overflow: 'hidden', 
+      display: 'flex', 
+      flexDirection: 'column', 
       justifyContent: 'center',
       alignItems: 'center',
       textAlign: 'center',
       padding: '0 2rem',
-      background: 'black',
+      background: 'var(--bg-color)',
       position: 'relative',
-      borderBottom: '2px solid white'
     }}>
       <div style={{
         maxWidth: '800px',
@@ -44,8 +44,8 @@ const Hero = () => {
           fontSize: '4rem',
           lineHeight: 1.1,
           marginBottom: '0.5rem',
-          color: 'white',
-          textShadow: '4px 4px 0px #333'
+          color: 'var(--text-color)',
+          textShadow: '4px 4px 0px var(--shadow-color)'
         }}>
           CAREER_PATH_OPTIMIZER
         </h1>
@@ -55,10 +55,10 @@ const Hero = () => {
 
         <p style={{
           fontSize: '1.25rem',
-          color: 'white',
+          color: 'var(--text-color)',
           marginBottom: '3rem',
           lineHeight: 1.6,
-          border: '1px dashed white',
+          border: '1px dashed var(--border-color)',
           padding: '2rem',
           maxWidth: '600px',
           margin: '0 auto 3rem auto'
@@ -77,8 +77,8 @@ const Hero = () => {
           <button className="retro-btn retro-btn-outline" onClick={() => document.getElementById('about').scrollIntoView()}>READ_MANUAL</button>
         </div>
 
-        <div style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#888' }}>
-            JOINING <span style={{ color: 'white', fontWeight: 'bold' }}>{count.toLocaleString()}+</span> ACTIVE AGENTS
+        <div style={{ marginTop: '2rem', fontSize: '0.9rem', color: 'var(--secondary-color)' }}>
+            JOINING <span style={{ color: 'var(--text-color)', fontWeight: 'bold' }}>{count.toLocaleString()}+</span> ACTIVE AGENTS
         </div>
       </div>
     </section>

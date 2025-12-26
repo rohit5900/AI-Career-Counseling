@@ -2,26 +2,26 @@ import React from 'react';
 
 const TargetAudience = () => {
     return (
-        <section style={{ padding: '4rem 2rem', background: 'black', borderBottom: '1px solid white' }}>
+        <section style={{ padding: '4rem 2rem', background: 'var(--bg-color)', borderBottom: '1px solid var(--border-color)' }}>
             <div className="retro-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4rem' }}>
                     
                     {/* Who is this for? */}
                     <div>
-                         <h3 style={{ fontSize: '1.5rem', marginBottom: '2rem', borderBottom: '2px solid white', display: 'inline-block' }}>TARGET_USER_PROFILES</h3>
+                         <h3 style={{ fontSize: '1.5rem', marginBottom: '2rem', borderBottom: '2px solid var(--border-color)', display: 'inline-block' }}>TARGET_USER_PROFILES</h3>
                          <ul style={{ listStyle: 'none', padding: 0 }}>
-                            <li style={{ marginBottom: '1.5rem', borderLeft: '4px solid white', paddingLeft: '1rem' }}>
+                            <li style={{ marginBottom: '1.5rem', borderLeft: '4px solid var(--border-color)', paddingLeft: '1rem' }}>
                                 <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>STUDENTS</div>
-                                <div style={{ color: '#888' }}>Seeking optimized entry points into the workforce.</div>
+                                <div style={{ color: 'var(--secondary-color)' }}>Seeking optimized entry points into the workforce.</div>
                             </li>
-                            <li style={{ marginBottom: '1.5rem', borderLeft: '4px solid white', paddingLeft: '1rem' }}>
+                            <li style={{ marginBottom: '1.5rem', borderLeft: '4px solid var(--border-color)', paddingLeft: '1rem' }}>
                                 <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>CAREER_SWITCHERS</div>
-                                <div style={{ color: '#888' }}>Migrating domain expertise to new tech stacks.</div>
+                                <div style={{ color: 'var(--secondary-color)' }}>Migrating domain expertise to new tech stacks.</div>
                             </li>
-                            <li style={{ marginBottom: '1.5rem', borderLeft: '4px solid white', paddingLeft: '1rem' }}>
+                            <li style={{ marginBottom: '1.5rem', borderLeft: '4px solid var(--border-color)', paddingLeft: '1rem' }}>
                                 <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>EARLY_PROFESSIONALS</div>
-                                <div style={{ color: '#888' }}>Calibrating trajectory for maximum velocity.</div>
+                                <div style={{ color: 'var(--secondary-color)' }}>Calibrating trajectory for maximum velocity.</div>
                             </li>
                          </ul>
                     </div>

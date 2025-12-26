@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useGamification } from '../context/GamificationContext';
 
 const Login = () => {
     const navigate = useNavigate();
+    // const { resetGamification } = useGamification(); // Unused
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [status, setStatus] = useState('IDLE'); // IDLE, LOADING, SUCCESS, ERROR
     const [errorMessage, setErrorMessage] = useState('');
@@ -27,9 +29,31 @@ const Login = () => {
         }
 
         // Mock simple validation
+        // Mock simple validation
         if (formData.email.includes('@')) {
+            // Check if user is registered
+            const isRegistered = localStorage.getItem('isRegistered');
+            
+            if (!isRegistered) {
+                setStatus('ERROR');
+                setErrorMessage('ACCESS_DENIED: ACCOUNT_NOT_FOUND. PLEASE_REGISTER.');
+                return;
+            }
+
             setStatus('SUCCESS');
-            setTimeout(() => navigate('/onboarding'), 800);
+            
+            // Check if we have an existing profile to resume
+            const existingProfile = localStorage.getItem('userProfile');
+            
+            // Navigate based on profile existence
+            setTimeout(() => {
+                if (existingProfile) {
+                    navigate('/dashboard');
+                } else {
+                    navigate('/onboarding');
+                }
+            }, 800);
+
         } else {
              setStatus('ERROR');
              setErrorMessage('INVALID_SYNTAX: EMAIL_FORMAT_ERROR');
@@ -37,7 +61,7 @@ const Login = () => {
     };
 
     return (
-        <div className="flex justify-center items-center" style={{ minHeight: '100vh', background: '#000' }}>
+        <div className="flex justify-center items-center" style={{ minHeight: '100vh', background: 'var(--bg-color)' }}>
             <div className="retro-container max-w-md w-full">
                 <h2 className="text-center" style={{ marginBottom: '2rem' }}>
                     SYSTEM ACCESS
@@ -89,7 +113,7 @@ const Login = () => {
                     
                     <button 
                         type="submit" 
-                        className="retro-btn retro-btn-primary mt-4"
+                        className="retro-btn retro-btn-primary mt-4 w-full"
                         disabled={status === 'LOADING' || status === 'SUCCESS'}
                         style={{ opacity: (status === 'LOADING' || status === 'SUCCESS') ? 0.7 : 1 }}
                     >
@@ -102,7 +126,7 @@ const Login = () => {
                     <Link to="/register" style={{ marginRight: '1rem' }}>INITIALIZE PROTOCAL</Link>
                 </div>
                  <div className="text-center mt-4" style={{ marginTop: '2rem' }}>
-                    <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '0.8rem' }}>[ &lt; RETURN_TO_BASE ]</Link>
+                    <Link to="/" style={{ textDecoration: 'none', fontSize: '0.8rem', display: 'inline-block', padding: '5px 10px', border: '1px dashed var(--border-color)' }}>[ &lt; RETURN_TO_BASE ]</Link>
                 </div>
             </div>
         </div>

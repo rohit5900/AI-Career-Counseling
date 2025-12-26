@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { soundManager } from '../utils/SoundManager';
 
+import { useGamification } from '../context/GamificationContext';
+
 const DemoPreview = () => {
+    const { resetGamification } = useGamification();
     const [input, setInput] = useState('');
     const [output, setOutput] = useState([
         { type: 'system', text: '> SYSTEM_READY' },
@@ -30,8 +33,16 @@ const DemoPreview = () => {
                     { type: 'success', text: 'AVAILABLE COMMANDS:' },
                     { type: 'info', text: '  /ANALYZE   - Start career analysis' },
                     { type: 'info', text: '  /SIMULATE  - Run career simulation' },
-                    { type: 'info', text: '  /RESET     - Clear terminal' }
+                    { type: 'info', text: '  /ANALYZE   - Start career analysis' },
+                    { type: 'info', text: '  /SIMULATE  - Run career simulation' },
+                    { type: 'info', text: '  /RESET     - Clear terminal' },
+                    { type: 'info', text: '  /DELETE_ALL - Purge all user data' }
                 ];
+                break;
+            case '/DELETE_ALL':
+                localStorage.clear();
+                resetGamification();
+                response = [{ type: 'success', text: 'SYSTEM PURGED. ALL USER DATA DELETED.' }];
                 break;
             case '/RESET':
                 setOutput([]);
@@ -51,14 +62,14 @@ const DemoPreview = () => {
     }, [blinkSpeed]);
 
     return (
-        <section style={{ padding: '4rem 2rem', background: '#050505', borderBottom: '1px solid white' }}>
+        <section style={{ padding: '4rem 2rem', background: 'var(--bg-color)', borderBottom: '1px solid var(--border-color)' }}>
             <div className="retro-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
                  <h2 className="text-center" style={{ fontSize: '2rem', marginBottom: '3rem' }}>SYSTEM_SIMULATION</h2>
 
                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                     
                     {/* ASCII Visualization */}
-                    <div style={{ border: '1px solid white', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ border: '1px solid var(--border-color)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <div style={{ fontFamily: 'monospace', fontSize: '1.2rem', lineHeight: '1.2', textAlign: 'center', whiteSpace: 'pre' }}>
 {`
     [ CURRENT_STATE ]
@@ -85,12 +96,12 @@ const DemoPreview = () => {
 
 
                     {/* Interactive Terminal */}
-                    <div style={{ background: 'black', border: '2px solid white', padding: '1.5rem', fontFamily: 'monospace', fontSize: '0.9rem', boxShadow: '5px 5px 0px #333', height: '400px', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ background: 'var(--bg-color)', border: '2px solid var(--border-color)', padding: '1.5rem', fontFamily: 'monospace', fontSize: '0.9rem', boxShadow: '5px 5px 0px var(--shadow-color)', height: '400px', display: 'flex', flexDirection: 'column' }}>
                         <div style={{ flex: 1, overflowY: 'auto', marginBottom: '1rem' }}>
                             {output.map((line, i) => (
                                 <div key={i} style={{ 
                                     marginBottom: '0.5rem', 
-                                    color: line.type === 'error' ? 'red' : line.type === 'success' ? '#4ade80' : line.type === 'input' ? 'white' : '#aaa' 
+                                    color: line.type === 'error' ? 'red' : line.type === 'success' ? '#4ade80' : line.type === 'input' ? 'var(--text-color)' : 'var(--secondary-color)' 
                                 }}>
                                     {line.text}
                                 </div>

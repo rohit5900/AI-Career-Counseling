@@ -35,12 +35,18 @@ const Navbar = () => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      borderBottom: '2px solid white',
-      background: 'black',
+      background: 'var(--bg-color)',
+      borderBottom: '2px solid var(--border-color)',
+      color: 'var(--text-color)',
       boxSizing: 'border-box'
     }}>
-      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', cursor: 'pointer', fontFamily: 'monospace' }} onClick={() => navigate('/')}>
-        {logoText}<span className="blink">_</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }} onClick={() => navigate('/')}>
+        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', cursor: 'pointer', fontFamily: 'monospace' }}>
+          {/* ASCII Logo placeholder */}
+          <span style={{ marginRight: '10px' }}>&gt;_</span>
+          {logoText}
+          <span className="blink" style={{ color: 'var(--text-color)' }}>_</span>
+        </div>
       </div>
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
         {!isLoggedIn ? (

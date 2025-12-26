@@ -32,7 +32,7 @@ const Typewriter = ({ text, onComplete }) => {
     <span>
       {displayedText}
       {displayedText.length < text.length && (
-        <span className="retro-cursor"></span>
+        <span className="retro-cursor" style={{ background: 'var(--text-color)' }}></span>
       )}
     </span>
   );
@@ -51,7 +51,7 @@ const ChatInterface = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  const { addXp, awardBadge } = useGamification();
+  const { addXp, awardBadge, addLog } = useGamification();
   const { brutalMode } = useGlobal();
 
   const scrollToBottom = () => {
@@ -72,7 +72,7 @@ const ChatInterface = () => {
   }, []);
 
   const handleEndSession = () => {
-    localStorage.removeItem("userProfile"); // Clear session data
+    // localStorage.removeItem("userProfile"); // Keep data for persistence
     setMessages((prev) => [
       ...prev,
       { role: "assistant", content: "TERMINATING SESSION...", typed: false },
@@ -167,6 +167,7 @@ const ChatInterface = () => {
       generateReport();
       addXp(100);
       awardBadge("ARCHIVIST");
+      addLog('EXPORTED ANALYSIS REPORT');
       return "REPORT GENERATED. DOWNLOADING...";
     }
 
@@ -213,6 +214,11 @@ const ChatInterface = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
+
+    // Filter out commands from general logs to avoid double logging or clutter
+    if (!userText.startsWith("/")) {
+        addLog(`SENT QUERY: "${userText.slice(0, 15)}${userText.length > 15 ? '...' : ''}"`);
+    }
 
     // Check for local commands first
     const localResponse = await processCommand(userText);
@@ -261,9 +267,12 @@ const ChatInterface = () => {
       `;
       addXp(50);
       awardBadge("PATHFINDER");
+      addLog('RAN CAREER ANALYSIS');
     } else if (upperText === "/WHY_THIS_PATH") {
+        addLog('QUERIED REASONING ENGINE');
         apiMessage = "Explain in detail why the generated Primary Match is the best fit compared to the others. Cite specific user traits.";
     } else if (upperText === "/COMPARE") {
+        addLog('COMPARED CAREER PATHS');
         apiMessage = "Compare the 3 suggested paths in a table format (using ASCII borders) based on Salary, Stability, and Time-to-Mastery.";
     } else if (upperText.startsWith("/SIMULATE") || upperText.startsWith("SIMULATE")) {
         const parts = upperText.split(" ");
@@ -364,17 +373,16 @@ const ChatInterface = () => {
       <div
         style={{
           padding: "1rem",
-          borderBottom: "2px solid white",
-          marginBottom: "1rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          background: "black",
+          background: "var(--bg-color)",
+          borderBottom: "2px solid var(--border-color)",
         }}
       >
-        <div style={{ fontWeight: "bold" }}>TERMINAL_ACCESS_POINT</div>
+        <div style={{ fontWeight: "bold", color: "var(--text-color)" }}>TERMINAL_ACCESS_POINT</div>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div style={{ fontSize: "0.8rem", color: "white" }}>
+          <div style={{ fontSize: "0.8rem", color: "var(--text-color)" }}>
             STATUS: ONLINE
           </div>
           <button
@@ -406,16 +414,16 @@ const ChatInterface = () => {
               maxWidth: "80%",
               alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
               fontFamily: "monospace",
-              color: "white",
+              color: "var(--text-color)",
             }}
           >
             <div
               style={{
                 padding: "1rem",
-                border: "2px solid white",
-                background: msg.role === "user" ? "white" : "black",
-                color: msg.role === "user" ? "black" : "white",
-                boxShadow: "4px 4px 0px white",
+                border: "2px solid var(--border-color)",
+                background: msg.role === "user" ? "var(--text-color)" : "var(--bg-color)",
+                color: msg.role === "user" ? "var(--bg-color)" : "var(--text-color)",
+                boxShadow: "4px 4px 0px var(--shadow-color)",
                 whiteSpace: "pre-wrap",
               }}
             >
@@ -425,7 +433,7 @@ const ChatInterface = () => {
                   justifyContent: "space-between",
                   marginBottom: "0.5rem",
                   borderBottom:
-                    msg.role === "user" ? "1px solid black" : "1px solid white",
+                    msg.role === "user" ? "1px solid var(--bg-color)" : "1px solid var(--text-color)",
                 }}
               >
                 <span style={{ fontWeight: "bold" }}>
@@ -451,9 +459,9 @@ const ChatInterface = () => {
           <div
             style={{
               alignSelf: "flex-start",
-              color: "white",
+              color: "var(--text-color)",
               padding: "1rem",
-              border: "1px dashed white",
+              border: "1px dashed var(--border-color)",
             }}
           >
             PROCESSING_REQUEST...
